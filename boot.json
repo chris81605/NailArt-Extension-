@@ -1,0 +1,50 @@
+{
+  "name": "美甲拓展",
+  "version": "1.1.7",
+  "styleFileList": [
+    "scriptEarly/Utils/spectrum.css"
+  ],
+  "scriptFileList_earlyload": [],
+  "scriptFileList_inject_early": [
+    "scriptEarly/nailArtRegist.js",
+    "scriptEarly/Utils/spectrum.js"
+  ],
+  "scriptFileList_preload": [],
+  "scriptFileList": [
+    "scripts/nailArt.js",
+    "scripts/default_nailArtRegist.js"
+  ],
+  "tweeFileList": [
+    "game/nailArt.twee"
+  ],
+  "imgFileList": [],
+  "additionFile": [
+    "Readme.md"
+  ],
+    "addonPlugin": [
+    {
+      "modName": "ReplacePatcher",
+      "addonName": "ReplacePatcherAddon",
+      "modVersion": "1.2.0",
+      "params": {
+        "js": [],
+      "twee":[]
+      }
+    },
+    {
+        "modName": "BeautySelectorAddon",
+        "addonName": "BeautySelectorAddon",
+        "modVersion": "^2.0.0",
+        "params": {
+            "types": [
+                {
+                    "type": "美甲拓展",
+                    "imgDir": "nailArt"
+                }
+            ]
+        }
+    }
+  ],
+  
+  "dependenceInfo": []
+}
