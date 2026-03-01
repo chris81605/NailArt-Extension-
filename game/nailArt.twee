@@ -1,1 +1,39 @@
+:: nailArt[widget]
 
+<<widget "nailArtButton">>
+<!-- 打開設定面板 -->
+
+<<button "美甲拓展">>
+    <<maplebirchReplace "nailArt" "title">> 
+<</button>>
+    
+<</widget>>
+
+<<widget "titleNailArt">>
+
+	<<setupTabs>>
+
+	<div id="overlayTabs" class="tab">
+
+		<<closeButtonMobile>>
+
+		<<button "美甲拓展">>
+			<<toggleTab>>
+			<<replace #customOverlayContent>>
+				<<nailArt>>
+			<</replace>>
+		<</button>>
+
+	</div>
+
+	<<closeButton>>
+
+<</widget>>
+
+<<widget "nailArt">>       
+    <div id="nailArtContainer">
+        <<handInfoUI>>
+        <<handUI>>
+    </div>
+    <<handOffsetUI>>
+<</widget>>
