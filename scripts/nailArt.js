@@ -57,9 +57,14 @@ function initNailArtVars() {
     // 染色參數
     V.nailArt.colorBlendMode ??= 'hard-light';
     
+    // 動畫幀開關
+    V.nailArt.disableAnimation ??= false;
+    
     // 座標偏移
     V.nailArt.offsetX ??= 0;
     V.nailArt.offsetY ??= 0;
+    // 縮放
+    V.nailArt.scale ??= 1;
     
     // 套用預設旗標
     V.nailArt.applyDefaultFlag ??= false;
@@ -137,9 +142,15 @@ $(document).one(':passagestart', () => {
 // 讀檔時初始化
 // =====================
 Save.onLoad.add(() => {
-    initNailArtSystem();
+    setTimeout(()=>{initNailArtSystem();}, 0);    
 });
 
+// =====================
+// 動畫幀開關判斷
+// =====================
+function nailArtAnimationMode() {
+    return V?.nailArt?.disableAnimation ? null : "idle";
+}
 
 // =====================
 // 圖層定義
@@ -160,7 +171,7 @@ Save.onLoad.add(() => {
                 return V.nailArt.hand.show && setup.handAssets?.hand;
             },
             zfn() { return V.nailArt.hand.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         nails: {
@@ -172,7 +183,7 @@ Save.onLoad.add(() => {
                 return V.nailArt.nails.show && setup.handAssets?.nails;
             },
             zfn() { return V.nailArt.nails.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         nailArt: {
@@ -186,7 +197,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.nailArt;
             },
             zfn() { return V.nailArt.art.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         nailArt2: {
@@ -200,7 +211,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.nailArt2;
             },
             zfn() { return V.nailArt.art2.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handBack: {
@@ -213,7 +224,7 @@ Save.onLoad.add(() => {
                 return V.nailArt.hand.show && setup.handAssets?.handBack;
             },
             zfn() { return V.nailArt.handBack.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         nailsBack: {
@@ -225,7 +236,7 @@ Save.onLoad.add(() => {
                 return V.nailArt.nails.show && setup.handAssets?.nailsBack;
             },
             zfn() { return V.nailArt.nailsBack.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         nailArtBack: {
@@ -239,7 +250,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.nailArtBack;
             },
             zfn() { return V.nailArt.nailArtBack.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         nailArt2Back: {
@@ -253,7 +264,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.nailArt2Back;
             },
             zfn() { return V.nailArt.nailArt2Back.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem: {
@@ -267,7 +278,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem;
             },
             zfn() { return V.nailArt.item.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItemAcc: {
@@ -282,7 +293,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItemAcc;
             },
             zfn() { return V.nailArt.item.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem2: {
@@ -296,7 +307,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem2;
             },
             zfn() { return V.nailArt.item2.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem2Acc: {
@@ -311,7 +322,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem2Acc;
             },
             zfn() { return V.nailArt.item2.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem3: {
@@ -325,7 +336,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem3;
             },
             zfn() { return V.nailArt.item3.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem3Acc: {
@@ -340,7 +351,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem3Acc;
             },
             zfn() { return V.nailArt.item3.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem4: {
@@ -354,7 +365,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem4;
             },
             zfn() { return V.nailArt.item4.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         },
 
         handItem4Acc: {
@@ -369,7 +380,7 @@ Save.onLoad.add(() => {
                     && setup.handAssets?.handItem4Acc;
             },
             zfn() { return V.nailArt.item4.z; },
-            animation: "idle"
+            animationfn: () => nailArtAnimationMode(),
         }
     };
 
@@ -738,7 +749,6 @@ Macro.add('handUI', {
         container.style.marginBottom = "10px";
         container.style.fontSize = "14px";
         
-        // 標題
         const title = document.createElement("div");
         title.innerText = '設定';
         title.style.fontWeight = "bold";
@@ -747,7 +757,6 @@ Macro.add('handUI', {
         title.style.marginBottom = "10px";
         container.appendChild(title);
                 
-        // 說明文字
         const description = document.createElement("div");
         description.innerText = 
         `手部件為總開關，關閉後將隱藏所有部件。
@@ -760,7 +769,6 @@ Macro.add('handUI', {
         description.style.padding = "0";      
         description.style.background = "transparent";
         description.style.border = "none";
-        
         container.appendChild(description);
 
         function createRow() {
@@ -788,17 +796,76 @@ Macro.add('handUI', {
             return sec;
         }
         
-        function createLabel(text) {
+        function createLabel(text, width = 120) {
             const label = document.createElement('div');
             label.textContent = text;
-            label.style.width = "120px";     // 固定寬度
+            label.style.width = width + "px";
             label.style.flexShrink = "0";
             label.style.textAlign = "left"; 
             return label;
         }
 
+        let openedAccordion = null;
+
+        function createAccordionSection(title) {
+            const wrap = document.createElement('div');
+            wrap.style.borderTop = "1px solid #333";
+            wrap.style.marginTop = "12px";
+
+            const header = document.createElement('div');
+            header.style.cursor = "pointer";
+            header.style.padding = "8px 0";
+            header.style.fontWeight = "bold";
+            header.style.color = "#FFD700";
+
+            const body = document.createElement('div');
+            body.style.paddingTop = "6px";
+            body.style.display = "none";
+
+            function close() {
+                body.style.display = "none";
+                header.textContent = "▶ " + title;
+            }
+
+            function open() {
+                if (openedAccordion && openedAccordion.close !== close) {
+                    openedAccordion.close();
+                }
+
+                body.style.display = "block";
+                header.textContent = "▼ " + title;
+                openedAccordion = { close };
+            }
+
+            header.addEventListener('click', () => {
+                if (body.style.display === "none") {
+                    open();
+                } else {
+                    close();
+                    openedAccordion = null;
+                }
+            });
+
+            close();
+
+            wrap.appendChild(header);
+            wrap.appendChild(body);
+
+            return { wrap, body };
+        }
+
+        function createNumberInput(value, width = 60) {
+            const input = document.createElement('input');
+            input.type = "text";
+            input.inputMode = "numeric";
+            input.pattern = "-?[0-9]*";
+            input.value = value;
+            input.style.width = width + "px";
+            return input;
+        }
+
         // =====================
-        // 手部樣式選單
+        // 手部設定
         // =====================
         const handSection = createSection("手部設定");
         const handRow = createRow();
@@ -811,11 +878,8 @@ Macro.add('handUI', {
             opt.innerText = setup.handStyles[key].name;
             handSelect.appendChild(opt);
         }
+
         handSelect.value = V.nailArt.hand.style;
-        handSelect.addEventListener('change', () => {
-            V.nailArt.hand.style = handSelect.value;
-            nailAtrRefresh();
-        });
         
         handRow.appendChild(handLabel);
         handRow.appendChild(handSelect);
@@ -823,9 +887,53 @@ Macro.add('handUI', {
         container.appendChild(handSection);
 
         // =====================
-        // 部件樣式選單
+        // 顯示控制：移到手部設定下
         // =====================
-        const styleSection = createSection("部件樣式");
+        const displaySection = createSection("顯示控制");  
+
+        const displayRow = createRow();
+        displayRow.style.flexWrap = "wrap";
+        displayRow.style.gap = "12px";
+
+        [
+            { key: 'hand', label: '手' },
+            { key: 'nails', label: '指甲' },
+            { key: 'art', label: '美甲' },
+            { key: 'art2', label: '美甲2' },
+            { key: 'item', label: '手持物' },
+            { key: 'item2', label: '手持物2' },
+            { key: 'item3', label: '手持物3' },
+            { key: 'item4', label: '手持物4' }
+        ].forEach(layer => {
+            const itemContainer = document.createElement('div');
+            itemContainer.style.display = "flex";
+            itemContainer.style.alignItems = "center";
+            itemContainer.style.gap = "4px";
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = V.nailArt[layer.key]?.show ?? true;
+            checkbox.addEventListener('change', () => {
+                V.nailArt[layer.key].show = checkbox.checked;
+                nailAtrRefresh(false);
+            });
+
+            const label = document.createElement('span');
+            label.textContent = layer.label;
+
+            itemContainer.appendChild(checkbox);
+            itemContainer.appendChild(label);
+            displayRow.appendChild(itemContainer);
+        });
+
+        displaySection.appendChild(displayRow);
+        container.appendChild(displaySection);
+
+        // =====================
+        // 部件樣式選單：摺疊
+        // =====================
+        const styleAcc = createAccordionSection("部件樣式");
+        const styleSection = styleAcc.body;
 
         const nailStyleRow = createRow();
         const artStyleRow = createRow();
@@ -872,7 +980,7 @@ Macro.add('handUI', {
         styleSection.appendChild(item3StyleRow);
         styleSection.appendChild(item4StyleRow);
 
-        container.appendChild(styleSection);
+        container.appendChild(styleAcc.wrap);
 
         // =====================
         // 重建部件選單並套用 defaults
@@ -881,7 +989,6 @@ Macro.add('handUI', {
             const current = setup.handStyles[V.nailArt.hand.style];
             if (!current) return;
 
-            // 套用 Defaults
             applyHandStyleDefaults(V.nailArt.hand.style);
 
             const STYLE_CONFIG = [
@@ -961,12 +1068,11 @@ Macro.add('handUI', {
             nailAtrRefresh(false);
         });
 
-        
         // =====================
-        // 部件染色
+        // 部件染色：摺疊
         // =====================        
-        
-        const titleSection = createSection('部件染色');            
+        const colorAcc = createAccordionSection("部件染色");
+        const titleSection = colorAcc.body;
                        
         function buildColorSection({
             title,
@@ -975,8 +1081,6 @@ Macro.add('handUI', {
         }) {
             const row = createRow();
 
-            // 左側文字
-            // row.appendChild(document.createTextNode(title + " "));
             row.appendChild(createLabel(title));
 
             const colorInput = document.createElement('input');
@@ -1013,62 +1117,24 @@ Macro.add('handUI', {
                 }
             });
 
-            // 🔥 加到同一個大區塊
             titleSection.appendChild(row);
         }
         
-        buildColorSection({
-            title: "指甲染色",
-            colorVar: "color",
-            enabledVar: "colorEnabled"
-        });
-
-        buildColorSection({
-            title: "美甲染色",
-            colorVar: "artColor",
-            enabledVar: "artColorEnabled"
-        });
-
-        buildColorSection({
-            title: "美甲2染色",
-            colorVar: "art2Color",
-            enabledVar: "art2ColorEnabled"
-        });
-
-        buildColorSection({
-            title: "手持物染色",
-            colorVar: "itemAccColor",
-            enabledVar: "itemAccColorEnabled"
-        });
-
-        buildColorSection({
-            title: "手持物2染色",
-            colorVar: "item2AccColor",
-            enabledVar: "item2AccColorEnabled"
-        });
+        buildColorSection({ title: "指甲染色", colorVar: "color", enabledVar: "colorEnabled" });
+        buildColorSection({ title: "美甲染色", colorVar: "artColor", enabledVar: "artColorEnabled" });
+        buildColorSection({ title: "美甲2染色", colorVar: "art2Color", enabledVar: "art2ColorEnabled" });
+        buildColorSection({ title: "手持物染色", colorVar: "itemAccColor", enabledVar: "itemAccColorEnabled" });
+        buildColorSection({ title: "手持物2染色", colorVar: "item2AccColor", enabledVar: "item2AccColorEnabled" });
+        buildColorSection({ title: "手持物3染色", colorVar: "item3AccColor", enabledVar: "item3AccColorEnabled" });
+        buildColorSection({ title: "手持物4染色", colorVar: "item4AccColor", enabledVar: "item4AccColorEnabled" });
         
-        buildColorSection({
-            title: "手持物3染色",
-            colorVar: "item3AccColor",
-            enabledVar: "item3AccColorEnabled"
-        });
-        
-        buildColorSection({
-            title: "手持物4染色",
-            colorVar: "item4AccColor",
-            enabledVar: "item4AccColorEnabled"
-        });
-        
-        container.appendChild(titleSection); 
+        container.appendChild(colorAcc.wrap); 
 
         // =====================
-        // 染色模式
+        // 染色模式：摺疊
         // =====================
-        
-        const blendLabel = createSection('染色模式');
-              
-        // 可用的染色混合模式列表
-        const blendSection = createSection('染色模式');
+        const blendAcc = createAccordionSection("染色模式");
+        const blendSection = blendAcc.body;
 
         const BLEND_MODES = [
             'normal','multiply','screen','overlay','lighten','darken',
@@ -1077,16 +1143,14 @@ Macro.add('handUI', {
         ];
 
         function buildBlendControl({ labelText, targetVar }) {
-
             const row = createRow();
-
             const select = document.createElement('select');
 
             BLEND_MODES.forEach(mode => {
-            const opt = document.createElement('option');
-            opt.value = mode;
-            opt.innerText = mode;
-            select.appendChild(opt);
+                const opt = document.createElement('option');
+                opt.value = mode;
+                opt.innerText = mode;
+                select.appendChild(opt);
             });
 
             select.value = V.nailArt[targetVar] ?? 'multiply';
@@ -1127,61 +1191,15 @@ Macro.add('handUI', {
             targetVar: "item4AccBlendMode"
         });
 
-        container.appendChild(blendSection);
+        container.appendChild(blendAcc.wrap);
 
         // =====================
-        // 顯示控制
+        // Z 值控制：摺疊 + 整體調整 + 細部調整
         // =====================
-        const displaySection = createSection("顯示控制");  
+        const zAcc = createAccordionSection("圖層 Z 值調整");
+        const zSection = zAcc.body;
 
-        const displayRow = createRow();
-        displayRow.style.flexWrap = "wrap";  // 允許換行
-        displayRow.style.gap = "12px";       // 每個勾選框之間間距
-
-        [
-            { key: 'hand', label: '手' },
-            { key: 'nails', label: '指甲' },
-            { key: 'art', label: '美甲' },
-            { key: 'art2', label: '美甲2' },
-            { key: 'item', label: '手持物' },
-            { key: 'item2', label: '手持物2' },
-            { key: 'item3', label: '手持物3' },
-            { key: 'item4', label: '手持物4' }
-        ].forEach(layer => {
-            // 建立每組 checkbox + label 的容器
-            const itemContainer = document.createElement('div');
-            itemContainer.style.display = "flex";
-            itemContainer.style.alignItems = "center";
-            itemContainer.style.gap = "4px";   // 勾選框和文字間距
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = V.nailArt[layer.key]?.show ?? true;
-            checkbox.addEventListener('change', () => {
-                V.nailArt[layer.key].show = checkbox.checked;
-                nailAtrRefresh(false);
-            });
-
-            const label = document.createElement('span');
-            label.textContent = layer.label;
-
-            itemContainer.appendChild(checkbox);
-            itemContainer.appendChild(label);
-
-            displayRow.appendChild(itemContainer);
-        });
-
-        displaySection.appendChild(displayRow);
-        container.appendChild(displaySection);
-        
-
-
-        // =====================
-        // Z 值控制
-        // =====================
-        const zSection = createSection("圖層 Z 值調整");
-
-        [
+        const zLayers = [
             { key: "hand", label: "手部" },
             { key: "nails", label: "指甲" },
             { key: "art", label: "美甲" },
@@ -1194,22 +1212,52 @@ Macro.add('handUI', {
             { key: "item2", label: "手持物2" },
             { key: "item3", label: "手持物3" },
             { key: "item4", label: "手持物4" }
-        ].forEach(layer => {
+        ];
+
+        const globalZRow = createRow();
+        globalZRow.appendChild(createLabel("整體 Z 偏移："));
+
+        const globalZInput = createNumberInput(0);
+        const globalZBtn = document.createElement('button');
+        globalZBtn.textContent = "套用";
+
+        globalZBtn.addEventListener('click', () => {
+            const delta = parseInt(globalZInput.value, 10);
+            if (Number.isNaN(delta) || delta === 0) return;
+
+            zLayers.forEach(layer => {
+                if (!V.nailArt[layer.key]) return;
+                V.nailArt[layer.key].z = Number(V.nailArt[layer.key].z || 0) + delta;
+            });
+
+            nailAtrRefresh(false);
+            Wikifier.wikifyEval('<<replace "#nailArtContainer">><<handInfoUI>><<handUI>><</replace>>');
+        });
+
+        globalZRow.appendChild(globalZInput);
+        globalZRow.appendChild(globalZBtn);
+        zSection.appendChild(globalZRow);
+
+        const zHint = document.createElement('div');
+        zHint.textContent = "整體 Z 偏移會把下方所有圖層一起加減；細部 Z 可單獨調整。";
+        zHint.style.color = "#aaa";
+        zHint.style.fontSize = "12px";
+        zHint.style.marginBottom = "8px";
+        zSection.appendChild(zHint);
+
+        zLayers.forEach(layer => {
             const row = createRow();
 
-            // 使用 createLabel 產生固定寬度標籤
             const labelDiv = createLabel(layer.label + " Z：");
             row.appendChild(labelDiv);
 
-            const input = document.createElement('input');
-            input.type = "number";
-            input.min = 0;
-            input.max = 1000;
-            input.value = V.nailArt[layer.key]?.z ?? 0;
-            input.style.width = "60px";
+            const input = createNumberInput(V.nailArt[layer.key]?.z ?? 0);
 
             input.addEventListener('input', () => {
-                V.nailArt[layer.key].z = parseInt(input.value);
+                const value = parseInt(input.value, 10);
+                if (Number.isNaN(value)) return;
+
+                V.nailArt[layer.key].z = value;
                 nailAtrRefresh(false);
             });
 
@@ -1217,11 +1265,119 @@ Macro.add('handUI', {
             zSection.appendChild(row);
         });
 
-        container.appendChild(zSection);
+        container.appendChild(zAcc.wrap);
 
         this.output.appendChild(container);
     }
 });
+
+// =====================
+// 縮放管線：支援左右雙幀動畫圖
+// =====================
+// =====================
+// 縮放管線：支援左右雙幀動畫圖
+// =====================
+(() => {
+    const handLayers = [
+        "hand", "handBack",
+        "nails", "nailsBack",
+        "nailArt", "nailArtBack",
+        "nailArt2", "nailArt2Back",
+        "handItem", "handItemAcc",
+        "handItem2", "handItem2Acc",
+        "handItem3", "handItem3Acc",
+        "handItem4", "handItem4Acc"
+    ];
+
+    const RenderingStepHandScale = {
+        name: "handLayerScale",
+
+        condition(layer) {
+            return handLayers.includes(layer.name);
+        },
+
+        render(image, layer) {
+            const scale = Math.max(0.5, Math.min(2, Number(V.nailArt?.scale ?? 1)));
+
+            if (scale === 1) {
+                return image;
+            }
+
+            const width = image.width;
+            const height = image.height;
+
+            const frameCount = 2;
+            const frameW = width / frameCount;
+            const frameH = height;
+
+            const canvas = Renderer.createCanvas(width, height);
+            const ctx = canvas;
+
+            ctx.clearRect(0, 0, width, height);
+
+            /*高品質縮放?
+            ctx.imageSmoothingEnabled = true;
+
+            if ("imageSmoothingQuality" in ctx) {
+                ctx.imageSmoothingQuality = "high";
+            }
+            */
+
+            for (let i = 0; i < frameCount; i++) {
+
+                const sx = i * frameW;
+                const sy = 0;
+
+                const sw = frameW;
+                const sh = frameH;
+
+                const dw = Math.round(frameW * scale);
+                const dh = Math.round(frameH * scale);
+
+                // 每幀以自身中心縮放
+                const dx = Math.round(
+                    i * frameW + (frameW - dw) / 2
+                );
+
+                const dy = Math.round(
+                    (frameH - dh) / 2
+                );
+
+                ctx.drawImage(
+                    image,
+                    sx, sy, sw, sh,
+                    dx, dy, dw, dh
+                );
+            }
+
+            return canvas.canvas;
+        }
+    };
+
+    const oldIndex = Renderer.RenderingPipeline.findIndex(
+        s => s.name === RenderingStepHandScale.name
+    );
+
+    if (oldIndex >= 0) {
+        Renderer.RenderingPipeline[oldIndex] = RenderingStepHandScale;
+    } else {
+        const offsetIndex = Renderer.RenderingPipeline.findIndex(
+            s => s.name === "handLayerOffset"
+        );
+
+        if (offsetIndex >= 0) {
+            Renderer.RenderingPipeline.splice(
+                offsetIndex,
+                0,
+                RenderingStepHandScale
+            );
+        } else {
+            Renderer.RenderingPipeline.push(
+                RenderingStepHandScale
+            );
+        }
+    }
+})();
 
 // =====================
 // 座標偏移管線
@@ -1271,7 +1427,7 @@ Macro.add('handOffsetUI', {
 
         // 標題
         const sectionTitle = document.createElement('div');
-        sectionTitle.innerText = "手部偏移設定";
+        sectionTitle.innerText = "手部偏移及縮放設定";
         sectionTitle.style.fontWeight = "bold";
         sectionTitle.style.marginBottom = "6px";
         sectionTitle.style.color = "#FFD700";
@@ -1290,18 +1446,18 @@ Macro.add('handOffsetUI', {
             // 滑塊
             const input = document.createElement('input');
             input.type = 'range';
-            input.min = -50;
-            input.max = 50;
-            input.step = 0.1;  // 細微調整
+            input.min = -100;
+            input.max = 100;
+            input.step = 1; 
             input.value = value;
             input.style.flex = "1";
 
             // 數字框
             const numberInput = document.createElement('input');
             numberInput.type = 'number';
-            numberInput.min = -50;
-            numberInput.max = 50;
-            numberInput.step = 0.1;
+            numberInput.min = -100;
+            numberInput.max = 100;
+            numberInput.step = 1;
             numberInput.value = value;
             numberInput.style.width = "60px";
 
@@ -1333,6 +1489,48 @@ Macro.add('handOffsetUI', {
             V.nailArt.offsetY = val;
             nailAtrRefresh(true);
         });
+        
+        const rowScale = createRow("縮放: ", V.nailArt.scale ?? 1, val => {
+            V.nailArt.scale = Math.max(0.5, Math.min(2, val));
+            nailAtrRefresh(true);
+        });
+
+        rowScale.querySelector('input[type="range"]').min = 0.5;
+        rowScale.querySelector('input[type="range"]').max = 2;
+        rowScale.querySelector('input[type="range"]').step = 0.05;
+
+        rowScale.querySelector('input[type="number"]').min = 0.5;
+        rowScale.querySelector('input[type="number"]').max = 2;
+        rowScale.querySelector('input[type="number"]').step = 0.05;
+        
+        const animRow = createRow("停用動畫：", "", () => {});
+        animRow.innerHTML = "";
+
+        const animLabel = document.createElement('label');
+        animLabel.textContent = "停用動畫：";
+
+        const animCheckbox = document.createElement('input');
+        animCheckbox.type = 'checkbox';
+        animCheckbox.checked = V.nailArt.disableAnimation;
+
+        animCheckbox.addEventListener('change', () => {
+            V.nailArt.disableAnimation = animCheckbox.checked;
+
+            Renderer.CanvasModelCaches = {};
+            nailAtrRefresh(true);
+        });
+
+        const note = document.createElement('span');
+        note.style.color = "#aaa";
+        note.style.fontSize = "12px";
+        note.textContent = "縮放時建議啟用，避免動畫幀裁切錯位或閃爍";
+
+        animRow.appendChild(animLabel);
+        animRow.appendChild(animCheckbox);
+        animRow.appendChild(note);
+
+        container.appendChild(animRow);
+        container.appendChild(rowScale);
 
         container.appendChild(rowX);
         container.appendChild(rowY);
