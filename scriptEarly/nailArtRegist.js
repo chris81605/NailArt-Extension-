@@ -9,7 +9,7 @@
                 if (maplebirchMod) {
                     
                     maplebirch.modList.pushUnique("美甲拓展");
-                    maplebirchFrameworks.addto('MenuSmall', 'nailArtButton');
+                    maplebirch.tool.addTo('MenuSmall', 'nailArtButton');
                     logger.log('[nailArt] Maplebirch 已註冊 nailArt');
                 
                 } else {
