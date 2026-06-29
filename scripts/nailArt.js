@@ -1605,6 +1605,19 @@ Macro.add('handUI', {
             .filter(v => Number.isFinite(v));
     }
     
+    function getMaskFrameCount(image) {
+        const width = Number(image?.width ?? 0);
+        const height = Number(image?.height ?? 0);
+
+        // 雙幀圖通常是 512x256，寬度約等於高度 * 2
+        if (width >= height * 1.8) {
+        return 2;
+        }
+
+        // 其他當單幀處理
+        return 1;
+    }
+    
     function getExcludeLayerNames() {
         return String(V.nailArt?.mask?.excludeLayerNamesText ?? "")
             .split(/[\n,，]+/)
@@ -1700,7 +1713,7 @@ Macro.add('handUI', {
             const width = image.width;
             const height = image.height;
 
-            const frameCount = 2;
+            const frameCount = getMaskFrameCount(image);
             const frameW = width / frameCount;
             const frameH = height;
 
