@@ -1596,6 +1596,10 @@ Macro.add('handUI', {
 // 作用範圍外保持原圖，作用範圍內只保留顯示框內
 // =====================
 (() => {
+    function isMainCanvasLayer(layer) {
+        return layer?.model?.name === "main";
+    }
+    
     function getMaskZList() {
         return String(V.nailArt?.mask?.zListText ?? "")
             .split(/[\s,，]+/)
@@ -1604,20 +1608,7 @@ Macro.add('handUI', {
             .map(v => Number(v))
             .filter(v => Number.isFinite(v));
     }
-    
-    function getMaskFrameCount(image) {
-        const width = Number(image?.width ?? 0);
-        const height = Number(image?.height ?? 0);
-
-        // 雙幀圖通常是 512x256，寬度約等於高度 * 2
-        if (width >= height * 1.8) {
-        return 2;
-        }
-
-        // 其他當單幀處理
-        return 1;
-    }
-    
+            
     function getExcludeLayerNames() {
         return String(V.nailArt?.mask?.excludeLayerNamesText ?? "")
             .split(/[\n,，]+/)
@@ -1694,9 +1685,11 @@ Macro.add('handUI', {
             if (maskDebugEnabled()) {
                 console.log("[nailsArts][Mask condition layer]", layer)
             };
-            
+            // 只處理主畫布
+            if (!isMainCanvasLayer(layer)) return false;
+            // 不處理自己的預覽框
             if (layer.name === "handMaskFrame") return false;
-
+            // 圖層名稱黑名單
             if (isExcludedLayer(layer)) return false;
 
             const z = getLayerZ(layer);
@@ -1705,23 +1698,48 @@ Macro.add('handUI', {
             return getMaskZList().includes(z);
         },
 
-        render(image, layer) {
+        render(image, layer, context) {
             const m = V.nailArt.mask;
+
+            // =====================
+            // 整體偏移
+            // 同時影響：
+            // 1. 顯示框位置
+            // 2. 畫回來的圖層內容
+            //
+            // 用於讓顯示框與框內內容同步移動。
+            // =====================
             const offsetX = Number(m.offsetX ?? 0);
             const offsetY = Number(m.offsetY ?? 0);
 
             const width = image.width;
             const height = image.height;
 
-            const frameCount = getMaskFrameCount(image);
-            const frameW = width / frameCount;
-            const frameH = height;
+            // =====================
+            // 幀資訊
+            // 使用 Renderer 提供的幀資訊。
+            // 避免自行判斷單幀 / 雙幀造成誤判。
+            // =====================
+            const rects = context?.rects || {};
 
+            const frameCount = Math.max(1, Math.round(Number(rects.subspriteFrameCount || 1)));
+            const frameW = Number(rects.subspriteWidth || width / frameCount);
+            const frameH = Number(rects.subspriteHeight || height);
+
+            // =====================
+            // 顯示框
+            // 只有顯示框內的內容會被畫回來。
+            // =====================
             const x = Number(m.x ?? 0);
             const y = Number(m.y ?? 0);
             const w = Number(m.w ?? frameW);
             const h = Number(m.h ?? frameH);
 
+            // =====================
+            // 作用範圍
+            // 只有這個範圍會被清掉。
+            // 作用範圍外會保留原圖。
+            // =====================
             const scopeX = Number(m.scopeX ?? 0);
             const scopeY = Number(m.scopeY ?? 0);
             const scopeW = Number(m.scopeW ?? frameW);
@@ -1732,13 +1750,13 @@ Macro.add('handUI', {
 
             ctx.clearRect(0, 0, width, height);
 
-            // 先畫完整原圖，讓作用範圍外保持不變
+            // 先畫完整原圖，讓作用範圍外保持不變。
             ctx.drawImage(image, 0, 0);
 
             for (let i = 0; i < frameCount; i++) {
                 const frameX = i * frameW;
 
-                // 清掉作用範圍
+                // 清掉作用範圍。
                 ctx.clearRect(
                     frameX + scopeX,
                     scopeY,
@@ -1746,7 +1764,7 @@ Macro.add('handUI', {
                     scopeH
                 );
 
-                // 只把「圓角顯示框」內畫回來
+                // 只把「圓角顯示框」內畫回來。
                 ctx.save();
 
                 roundRect(
@@ -1760,6 +1778,9 @@ Macro.add('handUI', {
 
                 ctx.clip();
 
+                // 將原圖內容畫回顯示框內。
+                // offsetX / offsetY 也套用在內容上，
+                // 讓顯示框與框內內容同步移動。
                 ctx.drawImage(
                     image,
                     frameX, 0, frameW, frameH,
